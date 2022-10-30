@@ -1,7 +1,7 @@
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import { Loading } from 'notiflix/build/notiflix-loading-aio';
 
-import { fetchApi } from './js/fetchImagesApi';
+import { fetchImages } from './js/fetchImagesApi';
 import cards from './templates/cards.hbs';
 
 import './css/style.css';
@@ -19,6 +19,8 @@ let lightbox = new SimpleLightbox('.gallery a', {
   captionsData: 'alt',
   captionDelay: 250,
 });
+let page = 1;
+const searchValue = input.value.trim();
 
 searchForm.addEventListener('submit', onSubmit);
 loadMoreBtn.addEventListener('click', onLoadMore);
@@ -26,10 +28,51 @@ loadMoreBtn.style.display = 'none';
 
 function onSubmit(e) {
   e.preventDefault();
-  cleanImages();
-  const searchValue = e.target.input.value.trim();
+  clearGallery();
 
   if (searchValue) {
-    const a = 10;
+    fetchImages(searchValue, page)
+      .then(data => {
+        if (data.hits.length === 0) {
+          Notify.failure(
+            'Sorry, there are no images matching your search query. Please try again.'
+          );
+        } else {
+          renderCards(data.hits);
+          Notify.success(`Hooray! We found ${data.totalHits} images.`);
+          loadMoreBtn.style.display = 'block';
+          lightbox.refresh();
+        }
+      })
+      .catch(function (error) {
+        console.log('Error', error.message);
+      });
+  } else if (searchValue === '') {
+    Notify.failure('Oops, please enter data in the search field');
   }
+}
+
+function onLoadMore() {
+  page += 1;
+
+  fetchImages(searchValue, page).then(data => {
+    renderCards(data.hits);
+    lightbox.refresh();
+    const totalPage = data.totalHits / 40;
+    if (totalPage <= page) {
+      loadMoreBtn.style.display = 'none';
+      Notify.warning(
+        "We're sorry, but you've reached the end of search results."
+      );
+    }
+  });
+}
+
+function renderCards(images) {
+  gallery.insertAdjacentElement('beforebegin', cards(images));
+}
+function clearGallery() {
+  page = 1;
+  loadMoreBtn.style.display = 'none';
+  gallery.innerHTML = '';
 }
