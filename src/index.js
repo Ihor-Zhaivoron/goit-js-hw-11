@@ -14,12 +14,9 @@ const loadMoreBtn = document.querySelector('.load-more');
 const searchBtn = document.querySelector('button[type="submit"]');
 const gallery = document.querySelector('.gallery');
 
-let lightbox = new SimpleLightbox('.gallery a', {
-  captionsData: 'alt',
-  captionDelay: 500,
-});
+let lightbox = new SimpleLightbox('.gallery a');
 let page = 1;
-// const searchQuery = input.value.trim();
+let searchQuery = '';
 
 searchForm.addEventListener('submit', onSubmit);
 loadMoreBtn.addEventListener('click', onLoadMore);
@@ -28,7 +25,7 @@ loadMoreBtn.style.display = 'none';
 function onSubmit(e) {
   e.preventDefault();
   clearGallery();
-  const searchQuery = e.target.input.value.trim();
+  searchQuery = e.target.input.value.trim();
   if (searchQuery) {
     fetchImages(searchQuery, page)
       .then(data => {
@@ -53,7 +50,7 @@ function onSubmit(e) {
 
 function onLoadMore() {
   page += 1;
-  const searchQuery = e.target.input.value.trim();
+  searchQuery = e.target.input.value.trim();
   fetchImages(searchQuery, page).then(data => {
     renderCards(data.hits);
     lightbox.refresh();
