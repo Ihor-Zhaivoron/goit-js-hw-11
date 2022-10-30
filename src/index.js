@@ -25,7 +25,7 @@ loadMoreBtn.style.display = 'none';
 function onSubmit(e) {
   e.preventDefault();
   clearGallery();
-  searchQuery = e.target.input.value.trim();
+  searchQuery = input.value.trim();
   if (searchQuery) {
     fetchImages(searchQuery, page)
       .then(data => {
@@ -50,7 +50,8 @@ function onSubmit(e) {
 
 function onLoadMore() {
   page += 1;
-  searchQuery = e.target.input.value.trim();
+  searchQuery = input.value.trim();
+  console.log(searchQuery);
   fetchImages(searchQuery, page).then(data => {
     renderCards(data.hits);
     lightbox.refresh();
