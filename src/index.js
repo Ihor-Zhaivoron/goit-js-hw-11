@@ -30,5 +30,6 @@ function onSubmit(e) {
   const searchValue = e.target.input.value.trim();
 
   if (searchValue) {
+    const a = 10;
   }
 }
