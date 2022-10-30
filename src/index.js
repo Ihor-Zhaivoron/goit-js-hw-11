@@ -66,7 +66,7 @@ function onLoadMore() {
 }
 
 function renderCards(images) {
-  gallery.insertAdjacentElement('beforebegin', cards(images));
+  gallery.insertAdjacentHTML('beforebegin', cards(images));
 }
 function clearGallery() {
   page = 1;
