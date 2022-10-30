@@ -1,5 +1,4 @@
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
-import { Loading } from 'notiflix/build/notiflix-loading-aio';
 
 import { fetchImages } from './js/fetchImagesApi';
 import cards from './templates/cards.hbs';
@@ -17,10 +16,10 @@ const gallery = document.querySelector('.gallery');
 
 let lightbox = new SimpleLightbox('.gallery a', {
   captionsData: 'alt',
-  captionDelay: 250,
+  captionDelay: 500,
 });
 let page = 1;
-const searchValue = input.value.trim();
+// const searchQuery = input.value.trim();
 
 searchForm.addEventListener('submit', onSubmit);
 loadMoreBtn.addEventListener('click', onLoadMore);
@@ -29,9 +28,9 @@ loadMoreBtn.style.display = 'none';
 function onSubmit(e) {
   e.preventDefault();
   clearGallery();
-
-  if (searchValue) {
-    fetchImages(searchValue, page)
+  const searchQuery = e.target.input.value.trim();
+  if (searchQuery) {
+    fetchImages(searchQuery, page)
       .then(data => {
         if (data.hits.length === 0) {
           Notify.failure(
@@ -47,15 +46,15 @@ function onSubmit(e) {
       .catch(function (error) {
         console.log('Error', error.message);
       });
-  } else if (searchValue === '') {
+  } else if (searchQuery === '') {
     Notify.failure('Oops, please enter data in the search field');
   }
 }
 
 function onLoadMore() {
   page += 1;
-
-  fetchImages(searchValue, page).then(data => {
+  const searchQuery = e.target.input.value.trim();
+  fetchImages(searchQuery, page).then(data => {
     renderCards(data.hits);
     lightbox.refresh();
     const totalPage = data.totalHits / 40;

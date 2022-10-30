@@ -12,8 +12,8 @@ const KEY = '30885562 - a2eefab65b39820f24403263b';
 //   page,
 // };
 
-export async function fetchImages() {
-  const response = await axios(
+export async function fetchImages(searchQuery, page) {
+  const response = await axios.get(
     `${BASE_URL}?key=${KEY}&q=${searchQuery}&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=${page}`
   );
   return response.data;
